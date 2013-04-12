@@ -32,7 +32,7 @@ Usage
     url  = CryptoTicker::MtGox.ticker('BTC/USD')
     json = agent.get( url ).body 
 
-    mtgox_data_hash = CryptoCurrency::MtGox.info( json )
+    mtgox_data_hash = CryptoTicker::MtGox.info( json )
     pp mtgox_data_hash
 
 Contributing
