@@ -1,5 +1,7 @@
 require 'minitest_helper'
 require 'uri'
+require 'json'
+require 'pp'
 
 class TestCryptoTicker < MiniTest::Unit::TestCase
   def test_that_it_has_a_version_number
@@ -54,5 +56,42 @@ class TestCryptoTicker < MiniTest::Unit::TestCase
     assert CryptoTicker::Bitstamp.ticker =~ URI::regexp
   end
 
+  def test_btce_parser
+    data = '{"ticker":{"high":99,"low":81,"avg":90,"vol":1857509.30091,"vol_cur":20229.18878,"last":84.5,"buy":84.873,"sell":84.01,"server_time":1366060728}}'
+    info = CryptoTicker::BTCe.info(data)
+
+    assert info.has_key?( :high )
+    assert info.has_key?( :low  )
+    assert info.has_key?( :last )
+
+    assert_equal BigDecimal, info.fetch(:high).class
+    assert_equal BigDecimal, info.fetch(:low ).class
+    assert_equal BigDecimal, info.fetch(:last).class
+  end
+
+  def test_get_class_for
+    klass = CryptoTicker::get_class_for('BTC-e')
+    assert_equal CryptoTicker::BTCe, klass
+
+    klass = CryptoTicker::get_class_for('BTCe')
+    assert_equal CryptoTicker::BTCe, klass
+
+    klass = CryptoTicker::get_class_for('btc-e')
+    assert_equal CryptoTicker::BTCe, klass
+
+    klass = CryptoTicker::get_class_for('MtGox')
+    assert_equal CryptoTicker::MtGox, klass
+
+    klass = CryptoTicker::get_class_for('mtgox')
+    assert_equal CryptoTicker::MtGox, klass
+
+    klass = CryptoTicker::get_class_for('Vircurex')
+    assert_equal CryptoTicker::Vircurex, klass
+
+    klass = CryptoTicker::get_class_for('vircurex')
+    assert_equal CryptoTicker::Vircurex, klass
+  end
+
 end
+
 
