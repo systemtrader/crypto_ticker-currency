@@ -1,4 +1,18 @@
 
+deprecated
+----------
+
+This module needs a re-write of the API. I initially tried to make it as
+minimal as possible, not including any user-agent/page-fetch functionality.
+Instead of fetching pages/urls, this lib would leave that to the developer and
+only provide a collection of URLs and methods used to parse/retrieve/extract
+the data. Since the exchanges each provide RESTful APIs anyway, there's not
+much point in keeping this around. Also, there exist other modules which are
+dedicated to specific exchanges, and those are more well-written than this. For
+example, the ruby-btce module works great for BTC-e. I'm sure there are several
+for MtGox. As such, I am expiring this module in favor of those.
+
+
 CryptoTicker
 ============
 
