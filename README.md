@@ -1,6 +1,12 @@
 
-deprecated
-----------
+## Revived!
+
+Like a phoenix, risen from the ashes, so also has this gem had a rebirth!
+Probably not, actually... but I can't find any other BTC-e gems out there that
+I actually like that use the public API. So, for now, I will be
+using/contributing to THIS gem.
+
+## deprecated
 
 This module needs a re-write of the API. I initially tried to make it as
 minimal as possible, not including any user-agent/page-fetch functionality.
@@ -13,8 +19,7 @@ example, the ruby-btce module works great for BTC-e. I'm sure there are several
 for MtGox. As such, I am expiring this module in favor of those.
 
 
-CryptoTicker
-============
+# CryptoTicker
 
 Collection of public data API urls for various online crypto-currency
 exchanges, e.g. MtGox, BTC-e, etc.
@@ -26,31 +31,42 @@ parses the data returned from those URLs. You'll have to use this in
 conjunction with 'mechanize' or 'net/http' or some other such module to
 actually do anything (see [example](#example)).
 
-Installation
-------------
+## Installation
 
     gem install crypto_ticker
 
-Usage
------
+# Usage
+
+### Synopsis
+
+  The ticker functions (btcusd, ltcusd, etc) return an HTTParty response, and
+  this module includes a parser for the body. The parser returns numeric data
+  as BigDecimal values, which can be manipulated however you like.
 
 ### Example
 
     require 'crypto_ticker'
-    require 'mechanize'
-    require 'pp'
 
-    agent = Mechanize.new
+    # get spot BTC/USD price from BTC-e exchange:
+    h = CryptoTicker::BTCe.btcusd.parsed_response
 
-    # get MtGox BTC/USD ticker URL:
-    url  = CryptoTicker::MtGox.ticker('BTC/USD')
-    json = agent.get( url ).body 
+    puts <<-EOF
+    BTC/USD stats: 
 
-    mtgox_data_hash = CryptoTicker::MtGox.info( json )
-    pp mtgox_data_hash
+           high: #{h[:high].to_f}
+            low: #{h[:low].to_f}
+            avg: #{h[:avg].to_f}
+            vol: #{h[:vol].to_f}
+        vol_cur: #{h[:vol_cur].to_f}
+           last: #{h[:last].to_f}
+            buy: #{h[:buy].to_f}
+           sell: #{h[:sell].to_f}
+        updated: #{h[:updated].to_f}
+    server_time: #{h[:server_time]}
+    EOF
 
-Contributing
-------------
+
+## Contributing
 
 1. Fork it (Github repo: [homepage][homepage])
 2. Create your feature branch (`git checkout -b my-new-feature`)
@@ -61,8 +77,8 @@ Contributing
 [homepage]: https://github.com/nmarley/crypto_ticker
 
 
-License
--------
+## License
+
 Released under the MIT License.  See the [LICENSE][] file for further details.
 
 [license]: LICENSE.md
