@@ -100,6 +100,8 @@ module CryptoTicker
 
     base_uri "btc-e.com/api/2"
     parser lambda { |body, format|
+      return JSON.parse(body) if body.include?('error')
+
       results = {}
       data = JSON.parse(body)
 
@@ -111,117 +113,21 @@ module CryptoTicker
       results
     }
 
-    # CryptoTicker::BTCe.btcusd.parsed_response
-    def self.btcusd
-      request :btc_usd
-    end
-
-    def self.ltcusd
-      request :ltc_usd
-    end
-
-    def self.ltcbtc
-      request :ltc_btc
-    end
-
-    def self.btcrur
-      request :btc_rur
-    end
-
-    def self.btceur
-      request :btc_eur
-    end
-
-    def self.ltcrur
-      request :ltc_rur
-    end
-
-    def self.nmcbtc
-      request :nmc_btc
-    end
-
-    def self.nvcbtc
-      request :nvc_btc
-    end
-
-    def self.trcbtc
-      request :trc_btc
-    end
-
-    def self.ppcbtc
-      request :ppc_btc
-    end
-
-    def self.ftcbtc
-      request :ftc_btc
-    end
-
-    def self.usdrur
-      request :usd_rur
-    end
-
-    def self.eurusd
-      request :eur_usd
-    end
-
-
     class << self
+
+      %w[ btcusd ltcusd ltcbtc btcrur btceur ltcrur nmcbtc nvcbtc trcbtc ppcbtc
+          ftcbtc usdrur eurusd cncbtc ].each do |meth|
+        define_method(meth) do
+          request meth.insert(3, "_").to_sym
+        end
+      end
+
+      protected
       def request pair_sym
         get "/#{pair_sym.to_s}/ticker"
       end
 
-      protected :request
     end
-
-    #@@valid_pairs = %w[ BTC/USD BTC/RUR BTC/EUR LTC/BTC LTC/USD LTC/RUR NMC/BTC
-    #                    USD/RUR EUR/USD NVC/BTC TRC/BTC PPC/BTC RUC/BTC ]
-
-    #class << self
-
-      #def ticker(base, quote='')
-      #  pair = CryptoTicker::makepair(base, quote)
-      #  if @@valid_pairs.include?( pair )
-      #    "https://btc-e.com/api/2/#{pair.to_sym}/ticker"
-      #  end
-      #end
-
-      #def trades(base, quote='')
-      #  pair = CryptoTicker::makepair(base, quote)
-      #  if @@valid_pairs.include?( pair )
-      #    "https://btc-e.com/api/2/#{pair.to_sym}/trades"
-      #  end
-      #end
-
-      #def depth(base, quote='')
-      #  pair = CryptoTicker::makepair(base, quote)
-      #  if @@valid_pairs.include?( pair )
-      #    "https://btc-e.com/api/2/#{pair.to_sym}/depth"
-      #  end
-      #end
-
-      # Accepts JSON retrieved from the appropriate BTC-e ticker URL, returns
-      # last trade amount (denominated in counter currency) as a float.
-      # eg: BTC/USD ticker will return amount in USD
-      #     NMC/BTC ticker will return amount in BTC
-      #def last(json)
-      #  hash = JSON.parse(json)
-      #  hash['ticker']['last'].to_d
-      #end
-
-#      def info(json)
-#        hash = JSON.parse(json)
-#        info = {}
-#        # TODO: recursively process Arrays, Hashes, Strings, Fixnums...
-#        if hash.has_key?('ticker')
-#          hash['ticker'].keys.each do |key|
-#            val  = hash['ticker'][key]
-#            info[key.to_sym] = val.send(@@ret_fcns[@@ret_types[key]])
-#          end
-#        end
-#        info
-#      end
-
-  #  end
 
   end
 

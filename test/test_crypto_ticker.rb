@@ -5,6 +5,7 @@ require 'pp'
 
 module CryptoTickerTestHelper
   def common_tests
+    assert !@result.has_key?("error")
     %i[ high low avg vol vol_cur last 
         buy sell updated server_time ].each do |sym|
       assert @result.has_key?(sym)
