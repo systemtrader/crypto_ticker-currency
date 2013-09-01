@@ -3,7 +3,7 @@ require 'uri'
 require 'json'
 require 'pp'
 
-class TestCryptoTicker < MiniTest::Unit::TestCase
+class TestCryptoTicker < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::CryptoTicker::VERSION
   end
