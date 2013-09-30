@@ -34,58 +34,33 @@ module CryptoTicker
   # lag or return large amounts of data.
 
   class MtGox
-    @@valid_pairs = %w[ BTC/USD LTC/USD NMC/USD ]
+    include HTTParty
+
+    base_uri "https://data.mtgox.com/api/2"
+
+    parser lambda { |body, format|
+      results = {}
+      data = JSON.parse(body)
+
+      return data if data.fetch("result", nil) != "success"
+
+      data = data["data"]
+      results[:item] = data.delete("item")
+      results[:now]  = Time.at( data.delete("now")[0..9].to_i )
+
+      results.merge! Hash[ data.map { |k, v| [ k.to_sym, v["value"].to_d ] } ]
+      results
+    }
 
     class << self
 
-      # return a ticker URL for a given crypto FX pair
-      def ticker(base, quote='')
-        pair = CryptoTicker::makepair(base, quote)
-        if @@valid_pairs.include?( pair )
-          "http://data.mtgox.com/api/2/" + pair.split('/').join('') +
-            "/money/ticker"
-        end
+      def btcusd
+        request :btcusd
       end
 
-      def trades(base, quote='')
-        pair = CryptoTicker::makepair(base, quote)
-        if @@valid_pairs.include?( pair )
-          "http://data.mtgox.com/api/2/" + pair.split('/').join('') +
-            "/money/trades/fetch"
-        end
-      end
-
-      def depth(base, quote='')
-        pair = CryptoTicker::makepair(base, quote)
-        if @@valid_pairs.include?( pair )
-          "http://data.mtgox.com/api/2/" + pair.split('/').join('') +
-            "/money/depth/fetch"
-        end
-      end
-
-      # Accepts JSON retrieved from the MtGox ticker URL, returns last trade
-      # amount (denominated in counter currency) as a BigDecimal.
-      # eg: BTC/USD ticker will return amount in USD
-      def last(json)
-        hash = JSON.parse(json)
-        if hash['result'] === 'success'
-          hash['data']['last']['value'].to_d
-        end
-      end
-
-      def info(json)
-        hash = JSON.parse(json)
-        info = {}
-        if hash['result'] === 'success'
-          hash['data'].each do |k,v|
-            if v.class.to_s.eql?( 'Hash' )
-              info[k.to_sym] = v['value'].to_d
-            end
-          end
-        end
-
-        # return either nil or the hash w/data
-        info.empty? ? nil : info
+      protected
+      def request pair_sym
+        get "/#{pair_sym.to_s.upcase}/money/ticker"
       end
     end
 
@@ -131,96 +106,95 @@ module CryptoTicker
 
   end
 
-
-  ##
-  # Vircurex ticker API and retrieval method
-  class Vircurex
-
-    class << self
-      # accept [base, quote] args for consistency with other classes, but ignore
-      # them
-      def ticker(base='', quote='')
-        # this one gets everything...
-        'https://vircurex.com/api/get_info_for_currency.json'
-      end
-
-      # Accepts JSON retrieved from the Vircurex ticker URL, as well as a
-      # currency pair (specified as 2 arguments, a base currency and a quote
-      # currency). Returns last trade amount in quote currency.
-      def getpair(json, base, quote)
-        hash = JSON.parse(json)
-
-        # upcase currency pair inputs
-        base.upcase!
-        quote.upcase!
-
-        # default value (may change this to just throw an exception)
-        last = 0.0
-
-        # if currency pair exists, return value of last trade
-        if hash.has_key?(base) && hash[base].has_key?( quote ) &&
-           hash[base][quote].has_key?('last_trade')
-            last = hash[base][quote]['last_trade'].to_d
-        end
-
-        last
-      end
-
-      # Accepts JSON retrieved from the Vircurex ticker URL, as well as a
-      # currency pair (specified as 2 arguments, a base currency and a quote
-      # currency). Returns last trade amount in quote currency.
-      def pair_info(json, base, quote)
-        hash = JSON.parse(json)
-
-        # upcase currency pair inputs
-        base.upcase!
-        quote.upcase!
-
-        # default value (may change this to just throw an exception)
-        info = {}
-
-        # if currency pair exists, return value of last trade
-        if hash.has_key?(base) && hash[base].has_key?( quote )
-           info = hash[base][quote]
-        end
-
-        info
-      end
-
-    end
-
-  end
-
-
-  class Bitstamp
-    # this exchange only has BTC/USD
-    class << self
-      def ticker(base='BTC', quote='USD')
-        'https://www.bitstamp.net/api/ticker/'
-      end
-
-      def info(json)
-        info = {}
-        JSON.parse(json).each do |k,v|
-          info[k.to_sym] = v.to_d
-        end
-        info
-      end
-
-      def last(json)
-        self.info(json)[:last]
-      end
-
-    end
-
-  end
+#  ##
+#  # Vircurex ticker API and retrieval method
+#  class Vircurex
+#
+#    class << self
+#      # accept [base, quote] args for consistency with other classes, but ignore
+#      # them
+#      def ticker(base='', quote='')
+#        # this one gets everything...
+#        'https://vircurex.com/api/get_info_for_currency.json'
+#      end
+#
+#      # Accepts JSON retrieved from the Vircurex ticker URL, as well as a
+#      # currency pair (specified as 2 arguments, a base currency and a quote
+#      # currency). Returns last trade amount in quote currency.
+#      def getpair(json, base, quote)
+#        hash = JSON.parse(json)
+#
+#        # upcase currency pair inputs
+#        base.upcase!
+#        quote.upcase!
+#
+#        # default value (may change this to just throw an exception)
+#        last = 0.0
+#
+#        # if currency pair exists, return value of last trade
+#        if hash.has_key?(base) && hash[base].has_key?( quote ) &&
+#           hash[base][quote].has_key?('last_trade')
+#            last = hash[base][quote]['last_trade'].to_d
+#        end
+#
+#        last
+#      end
+#
+#      # Accepts JSON retrieved from the Vircurex ticker URL, as well as a
+#      # currency pair (specified as 2 arguments, a base currency and a quote
+#      # currency). Returns last trade amount in quote currency.
+#      def pair_info(json, base, quote)
+#        hash = JSON.parse(json)
+#
+#        # upcase currency pair inputs
+#        base.upcase!
+#        quote.upcase!
+#
+#        # default value (may change this to just throw an exception)
+#        info = {}
+#
+#        # if currency pair exists, return value of last trade
+#        if hash.has_key?(base) && hash[base].has_key?( quote )
+#           info = hash[base][quote]
+#        end
+#
+#        info
+#      end
+#
+#    end
+#
+#  end
+#
+#
+#  class Bitstamp
+#    # this exchange only has BTC/USD
+#    class << self
+#      def ticker(base='BTC', quote='USD')
+#        'https://www.bitstamp.net/api/ticker/'
+#      end
+#
+#      def info(json)
+#        info = {}
+#        JSON.parse(json).each do |k,v|
+#          info[k.to_sym] = v.to_d
+#        end
+#        info
+#      end
+#
+#      def last(json)
+#        self.info(json)[:last]
+#      end
+#
+#    end
+#
+#  end
 
   class << self
     @@h = {
       'btce'     => CryptoTicker::BTCe,
       'mtgox'    => CryptoTicker::MtGox,
-      'vircurex' => CryptoTicker::Vircurex,
-      'bitstamp' => CryptoTicker::Bitstamp,
+      #'vircurex' => CryptoTicker::Vircurex,
+      #'bitstamp' => CryptoTicker::Bitstamp,
     }
     def get_class_for(exchange_name)
       @@h[ exchange_name.gsub('-', '').downcase ]
