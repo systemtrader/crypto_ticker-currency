@@ -8,6 +8,8 @@ class TestMtGox < Minitest::Test
       assert @result.has_key?(sym)
     end
     assert @result[:high] >= @result[:low]
+    assert @result[:last] <= @result[:high]
+    assert @result[:last] >= @result[:low]
   end
 end
 
