@@ -1,7 +1,4 @@
 require 'minitest_helper'
-require 'uri'
-require 'json'
-require 'pp'
 
 class TestMtGox < Minitest::Test
   def test_mtgox_btcusd
