@@ -1,4 +1,4 @@
-## 0.1.0.beta (2013-09-01)
+## 0.1.0.beta (2013-10-08)
 
 Bugfixes:
 
@@ -9,6 +9,7 @@ Features:
   - re-write API (non-backwards-compatible changes)
   - now mixes in HTTParty
   - parser returns numeric values as BigDecimal
+  - only BTC-e and MtGox are currently supported
 
 ## 0.0.3 (2013-04-21)
 
