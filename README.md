@@ -2,7 +2,7 @@
 # CryptoTicker
 
 Provides a simple, uniform method for accessing public ticker APIs for various
-online crypto-currency (e.g. Bitcoin, Litecoin) exchanges (e.g. MtGox, BTC-e,
+online crypto-currency (e.g. Bitcoin, Litecoin) exchanges (e.g. Bitstamp, BTC-e,
 etc.).
 
 ## Revived!
@@ -34,7 +34,7 @@ using/contributing to _this_ gem.
     h = CryptoTicker::BTCe.btcusd.parsed_response
 
     puts <<-EOF
-    BTC/USD stats: 
+    BTC/USD stats:
 
            high: #{h[:high].to_f}
             low: #{h[:low].to_f}

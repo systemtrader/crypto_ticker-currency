@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Nathan Marley"]
   spec.email         = ["nmarley@blackcarrot.be"]
   spec.description   = %q{Collection of public data API urls for various online
-                          crypto-currency exchanges, e.g. MtGox, BTC-e, etc.}
+                          crypto-currency exchanges, e.g. Bitstamp, BTC-e, etc.}
   spec.summary       = spec.description
   spec.homepage      = "https://github.com/nmarley/crypto_ticker"
   spec.license       = "MIT"

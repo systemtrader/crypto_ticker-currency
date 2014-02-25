@@ -1,4 +1,3 @@
-
 require 'crypto_ticker/version'
 require 'json'
 require 'bigdecimal'
@@ -16,41 +15,26 @@ require 'time'
 module CryptoTicker
 
   ##
-  # MtGox BTC/USD ticker and retrieval method
+  # Bitstamp BTC/USD ticker
   #
-  # note: The official MtGox API documentation is very sparse, and some methods
-  # are published but undocumented. The 'ticker' method should work, others may
-  # lag or return large amounts of data.
 
-  class MtGox
+  class Bitstamp
     include HTTParty
 
-    base_uri "https://data.mtgox.com/api/2"
+    base_uri "https://www.bitstamp.net"
 
     parser lambda { |body, format|
       results = {}
       data = JSON.parse(body)
 
-      return data if data.fetch("result", nil) != "success"
+      results[:timestamp]  = Time.at( data.delete("timestamp").to_i )
 
-      data = data["data"]
-      results[:item] = data.delete("item")
-      results[:now]  = Time.at( data.delete("now")[0..9].to_i )
-
-      results.merge! Hash[ data.map { |k, v| [ k.to_sym, v["value"].to_d ] } ]
+      results.merge! Hash[ data.map { |k, v| [ k.to_sym, v.to_d ] } ]
       results
     }
 
-    class << self
-
-      def btcusd
-        request :btcusd
-      end
-
-      protected
-      def request pair_sym
-        get "/#{pair_sym.to_s.upcase}/money/ticker"
-      end
+    def self.btcusd
+      get "/api/ticker/"
     end
 
   end
@@ -62,7 +46,7 @@ module CryptoTicker
   class BTCe
     include HTTParty
 
-    base_uri "btc-e.com/api/2"
+    base_uri "btc-e.com"
     parser lambda { |body, format|
       return JSON.parse(body) if body.include?('error')
 
@@ -88,7 +72,7 @@ module CryptoTicker
 
       protected
       def request pair_sym
-        get "/#{pair_sym.to_s}/ticker"
+        get "/api/2/#{pair_sym.to_s}/ticker"
       end
 
     end
@@ -99,9 +83,8 @@ module CryptoTicker
   class << self
     @@exchange_class = {
       'btce'     => CryptoTicker::BTCe,
-      'mtgox'    => CryptoTicker::MtGox,
+      'bitstamp' => CryptoTicker::Bitstamp,
       #'vircurex' => CryptoTicker::Vircurex,
-      #'bitstamp' => CryptoTicker::Bitstamp,
     }
 
     def get_class_for(exchange_name)

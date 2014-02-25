@@ -74,11 +74,11 @@ class TestCryptoTicker < Minitest::Test
     klass = CryptoTicker::get_class_for('btc-e')
     assert_equal CryptoTicker::BTCe, klass
 
-    klass = CryptoTicker::get_class_for('MtGox')
-    assert_equal CryptoTicker::MtGox, klass
+    klass = CryptoTicker::get_class_for('Bitstamp')
+    assert_equal CryptoTicker::Bitstamp, klass
 
-    klass = CryptoTicker::get_class_for('mtgox')
-    assert_equal CryptoTicker::MtGox, klass
+    klass = CryptoTicker::get_class_for('bitstamp')
+    assert_equal CryptoTicker::Bitstamp, klass
 
     # not yet implemented
     #

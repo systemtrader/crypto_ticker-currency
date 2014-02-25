@@ -1,3 +1,13 @@
+## 0.2.0.beta (2014-02-24)
+
+Bugfixes:
+
+  - remove MtGox
+
+Features:
+
+  - add Bitstamp
+
 ## 0.1.0.beta (2013-10-08)
 
 Bugfixes:
