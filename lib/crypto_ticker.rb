@@ -79,11 +79,30 @@ module CryptoTicker
 
   end
 
+  class Localbitcoins
+    include HTTParty
+
+    base_uri "https://localbitcoins.com"
+    parser lambda { |body, format|
+      results = {}
+      data = JSON.parse(body)
+
+      usd = data["USD"]
+      results[:last] = usd["rates"]["last"]
+      results[:volume] = usd["volume_btc"]
+      results
+    }
+
+    def self.btcusd
+      get "/bitcoinaverage/ticker-all-currencies/"
+    end
+  end
 
   class << self
     @@exchange_class = {
       'btce'     => CryptoTicker::BTCe,
       'bitstamp' => CryptoTicker::Bitstamp,
+      'localbitcoins' => CryptoTicker::Localbitcoins,
       #'vircurex' => CryptoTicker::Vircurex,
     }
 

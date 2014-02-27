@@ -1,3 +1,9 @@
+## 0.2.1.beta (2014-02-26)
+
+Features:
+
+  - add localbitcoins
+
 ## 0.2.0.beta (2014-02-24)
 
 Bugfixes:

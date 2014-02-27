@@ -21,6 +21,12 @@ class TestCryptoTicker < Minitest::Test
     klass = CryptoTicker::get_class_for('bitstamp')
     assert_equal CryptoTicker::Bitstamp, klass
 
+    klass = CryptoTicker::get_class_for('localbitcoins')
+    assert_equal CryptoTicker::Localbitcoins, klass
+
+    klass = CryptoTicker::get_class_for('Localbitcoins')
+    assert_equal CryptoTicker::Localbitcoins, klass
+
     # not yet implemented
     #
     #klass = CryptoTicker::get_class_for('Vircurex')
