@@ -1,16 +1,14 @@
-
-# CryptoTicker
+# CryptoTicker {deprecated - see note}
 
 Provides a simple, uniform method for accessing public ticker APIs for various
 online crypto-currency (e.g. Bitcoin, Litecoin) exchanges (e.g. Bitstamp, BTC-e,
 etc.).
 
-## Revived!
+## Deprecated
 
-Like a phoenix, risen from the ashes, so also has this gem had a rebirth!
-Probably not, actually... but I can't find any other BTC-e gems out there that
-I actually like that use the public ticker API. So for now I will be
-using/contributing to _this_ gem.
+I don't use this and don't recommend it. 'Twas made when I started learning
+Ruby, but doesn't offer any significant functionality.
+
 
 ## Installation
 
@@ -47,21 +45,3 @@ using/contributing to _this_ gem.
         updated: #{h[:updated].to_f}
     server_time: #{h[:server_time]}
     EOF
-
-
-## Contributing
-
-1. Fork it (Github repo: [homepage][homepage])
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
-
-[homepage]: https://github.com/nmarley/crypto_ticker
-
-
-## License
-
-Released under the MIT License.  See the [LICENSE][] file for further details.
-
-[license]: LICENSE.md
